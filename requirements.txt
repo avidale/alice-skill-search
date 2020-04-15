@@ -1,0 +1,8 @@
+Flask
+mongomock
+nltk
+pymongo
+pyTelegramBotAPI
+pyyaml
+tgalice>=0.2.7
+requests
