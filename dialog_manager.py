@@ -35,7 +35,7 @@ class SearcherDialogManager(BaseDialogManager):
         uo['found_skills'] = [doc['id'] for doc in results]
         resp_text = 'Нашла {} навыков:'.format(len(results))
         links = []
-        for i, doc in enumerate(results[:5]):
+        for i, doc in enumerate(results[:3]):
             resp_text = resp_text + '\n {}: {};'.format(
                 i+1,
                 nlg.skill_title(doc),
