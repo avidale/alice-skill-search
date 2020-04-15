@@ -6,4 +6,5 @@ pyTelegramBotAPI
 pyyaml
 tgalice>=0.2.7
 requests
-sentry_sdk
+sentry-sdk
+razdel
