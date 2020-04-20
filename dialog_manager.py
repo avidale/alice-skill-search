@@ -14,18 +14,18 @@ class SearcherDialogManager(BaseDialogManager):
     def respond(self, ctx: tgalice.dialog.Context):
         uo = ctx.user_object or {}
         if ctx.session_is_new() or not ctx.message_text or ctx.message_text == '/start':
-            resp_text = 'Привет! Это приватный навык "Свой каталог" для поиска других навыков.' \
+            resp_text = 'Привет! Это приватный навык "Искатель навыков" для поиска других навыков.' \
                         'Можете спросить меня, например, "Какой навык рассказывает про костный мозг?"' \
                         'Чтобы выйти, скажите "Алиса, хватит"'
             return tgalice.dialog.Response(resp_text)
         elif tgalice.basic_nlu.like_help(ctx.message_text):
-            resp_text = 'Вы в приватном навыке "Свой каталог" для поиска других навыков.' \
+            resp_text = 'Вы в приватном навыке "Искатель навыков" для поиска других навыков.' \
                         'Можете спросить меня, например, "Какой навык рассказывает про костный мозг?"' \
                         'Чтобы выйти, скажите "Алиса, хватит"'
             return tgalice.dialog.Response(resp_text, suggests=['Хватит'])
         elif tgalice.basic_nlu.like_exit(ctx.message_text):
             resp_text = 'Всего доброго! Чтобы вернуться в навык, ' \
-                        'скажите "Алиса, включи навык свой каталог".'
+                        'скажите "Алиса, включи навык "Искатель навыков".'
             return tgalice.dialog.Response(resp_text, commands=[tgalice.COMMANDS.EXIT])
         search_text = nlu.get_search_text(ctx.message_text)
         results = self.engine.find(search_text)
