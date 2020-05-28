@@ -4,7 +4,7 @@ nltk
 pymongo
 pyTelegramBotAPI
 pyyaml
-tgalice>=0.2.7
+tgalice>=0.2.10
 requests
 sentry-sdk
 razdel
