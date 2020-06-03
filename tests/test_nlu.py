@@ -1,6 +1,6 @@
 import pytest
 
-from skill.nlu import get_search_text, get_details_skill
+from skill.nlu import get_search_text, get_details_skill, get_exact_details_skill
 
 
 @pytest.mark.parametrize('text_in,text_out', [
@@ -25,3 +25,13 @@ def test_get_search_text(text_in, text_out):
 ])
 def test_get_details_skill(text_in, text_out):
     assert get_details_skill(text_in) == text_out
+
+
+@pytest.mark.parametrize('text_in,text_out', [
+    ('расскажи про подробнее про страна', None),
+    ('алиса расскажи про второй навык', 2),
+    ('23', 23),
+    ('подробнее про 23 номер', 23),
+])
+def test_get_exact_details_skill(text_in, text_out):
+    assert get_exact_details_skill(text_in) == text_out
