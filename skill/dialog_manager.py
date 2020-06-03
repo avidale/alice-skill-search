@@ -120,7 +120,9 @@ def format_serp(results, page=0, page_size=3):
         first = first % len(results)
     last = first + page_size
     resp_text = 'Нашла {} навыков'.format(len(results))
-    if first == 0:
+    if last <= page_size:
+        resp_text = resp_text + ':'
+    elif first == 0:
         resp_text = resp_text + ', вот первые три:'
     else:
         resp_text = resp_text + ', вот следующие три:'
