@@ -26,6 +26,7 @@ class SearcherDialogManager(BaseDialogManager):
         self.faq_dm = tgalice.dialog_manager.faq.FAQDialogManager(
             faq_file, matcher='cosine',
         )
+        self.faq_dm.matcher.threshold = 0.8
 
     def respond(self, ctx: tgalice.dialog.Context):
         uo = ctx.user_object or {}
@@ -81,7 +82,7 @@ class SearcherDialogManager(BaseDialogManager):
         return response
 
 
-def make_joint_matcher(base_matcher: tgalice.nlu.matchers.BaseMatcher, intents):
+def make_joint_matcher(base_matcher: tgalice.nlu.matchers.BaseMatcher, intents, threshold=0.8):
     # todo: integrate it to TgAlice
     labels = []
     texts = []
@@ -102,4 +103,4 @@ def make_joint_matcher(base_matcher: tgalice.nlu.matchers.BaseMatcher, intents):
     base_matcher.fit(texts, labels)
     re_matcher = tgalice.nlu.matchers.RegexMatcher()
     re_matcher.fit(re_texts, re_labels)
-    return tgalice.nlu.matchers.MaxMatcher([base_matcher, re_matcher])
+    return tgalice.nlu.matchers.MaxMatcher([base_matcher, re_matcher], threshold=threshold)
