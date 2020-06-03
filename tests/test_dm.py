@@ -26,5 +26,15 @@ def test_greetings(mock_dm: SearcherDialogManager):
 
 
 def test_search(mock_dm: SearcherDialogManager):
+    # expect serp
     resp = mock_dm.respond(make_context('найди навык про воду'))
     assert 'Время выпить воды' in resp.text
+    assert '1' in resp.suggests
+
+    # expect skill card
+    ctx1 = make_context('расскажи подробнее про первый навык', prev_response=resp)
+    resp1 = mock_dm.respond(ctx1)
+    assert 'Время выпить воды' in resp1.text
+    assert 'вести учет выпитой воды' in resp1.text
+    assert 'к списку' in resp1.suggests
+    assert len(resp1.links) == 1
