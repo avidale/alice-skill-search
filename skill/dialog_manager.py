@@ -80,16 +80,22 @@ class SearcherDialogManager(BaseDialogManager):
             response = tgalice.dialog.Response(resp_text, links=links, user_object=uo, suggests=suggests)
             return response
         elif result_number is not None and prev_results and 'found_skills_page' in uo:
+            links = []
             if 1 <= result_number <= len(prev_results):
-                doc = prev_results[result_number-1]
+                doc: dict = prev_results[result_number-1]
                 resp_text = 'Навык "{}".\n{}'.format(
                     doc['name'], doc['description'],
                 )
                 resp_text = nlg.clip_text(resp_text, 1000)
+                links.append({
+                    'title': 'Запустить навык',
+                    'hide': False,
+                    'url': 'https://alice.ya.ru/s/{}'.format(doc['id']),
+                })
             else:
                 resp_text = 'Навыка с таким номером я не нашла.'
             suggests = ['к списку']
-            return tgalice.dialog.Response(resp_text, user_object=uo, suggests=suggests)
+            return tgalice.dialog.Response(resp_text, user_object=uo, suggests=suggests, links=links)
         elif 'go_to_list' in intents and prev_results and 'found_skills_page' in uo:
             resp_text, links, suggests = format_serp(prev_results, page=uo['found_skills_page'])
             return tgalice.dialog.Response(resp_text, links=links, user_object=uo, suggests=suggests)
