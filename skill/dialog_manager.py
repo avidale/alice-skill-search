@@ -35,6 +35,14 @@ class SearcherDialogManager(BaseDialogManager):
         intents = self.intent_matcher.aggregate_scores(text)
         faq_response = self.faq_dm.try_to_respond(ctx)
 
+        prev_results = None
+        if uo.get('found_skills'):
+            prev_results = [
+                self.engine.docs[doc_id]
+                for doc_id in uo['found_skills']
+                if doc_id in self.engine.docs
+            ]
+
         if ctx.session_is_new() or not ctx.message_text or ctx.message_text == '/start':
             resp_text = 'Привет! Это навык "Искатель навыков" для поиска других навыков. ' \
                         'Можете спросить меня, например, "Какой навык рассказывает про костный мозг?" ' \
@@ -59,6 +67,16 @@ class SearcherDialogManager(BaseDialogManager):
         elif faq_response:
             faq_response.updated_user_object = uo
             return faq_response
+        elif 'next_skills' in intents and prev_results and 'found_skills_page' in uo:
+            uo['found_skills_page'] += 1
+            resp_text, links, suggests = format_serp(prev_results, page=uo['found_skills_page'])
+            response = tgalice.dialog.Response(resp_text, links=links, user_object=uo, suggests=suggests)
+            return response
+        elif 'prev_skills' in intents and prev_results and 'found_skills_page' in uo:
+            uo['found_skills_page'] -= 1
+            resp_text, links, suggests = format_serp(prev_results, page=uo['found_skills_page'])
+            response = tgalice.dialog.Response(resp_text, links=links, user_object=uo, suggests=suggests)
+            return response
 
         search_text = nlu.get_search_text(ctx.message_text)
         results = self.engine.find(search_text)
@@ -66,20 +84,42 @@ class SearcherDialogManager(BaseDialogManager):
             resp_text = 'Простите, ничего не нашла по запросу "{}".'.format(search_text)
             return tgalice.dialog.Response(resp_text)
         uo['found_skills'] = [doc['id'] for doc in results]
-        resp_text = 'Нашла {} навыков:'.format(len(results))
-        links = []
-        for i, doc in enumerate(results[:3]):
-            resp_text = resp_text + '\n {}: {};'.format(
-                i+1,
-                nlg.skill_title(doc),
-            )
-            links.append({
-                'title': doc['name'],
-                'hide': False,
-                'url': 'https://alice.ya.ru/s/{}'.format(doc['id']),
-            })
-        response = tgalice.dialog.Response(resp_text, links=links, user_object=uo)
+        uo['found_skills_page'] = 0
+        resp_text, links, suggests = format_serp(results)
+        response = tgalice.dialog.Response(resp_text, links=links, user_object=uo, suggests=suggests)
         return response
+
+
+def format_serp(results, page=0, page_size=3):
+    first = page * page_size
+    if first < 0:
+        first += len(results)
+    if first >= len(results):
+        first = first % len(results)
+    last = first + page_size
+    resp_text = 'Нашла {} навыков'.format(len(results))
+    if first == 0:
+        resp_text = resp_text + ', вот первые три:'
+    else:
+        resp_text = resp_text + ', вот следующие три:'
+    links = []
+    suggests = []
+    for i, doc in enumerate(results[first: last]):
+        resp_text = resp_text + '\n {}: {};'.format(
+            first + i + 1,
+            nlg.skill_title(doc),
+        )
+        suggests.append(str(first + i + 1))
+        links.append({
+            'title': doc['name'],
+            'hide': False,
+            'url': 'https://alice.ya.ru/s/{}'.format(doc['id']),
+        })
+    if last + 1 < len(results):
+        suggests.append('дальше')
+    if first > 0:
+        suggests.append('назад')
+    return resp_text, links, suggests
 
 
 def make_joint_matcher(base_matcher: tgalice.nlu.matchers.BaseMatcher, intents, threshold=0.8):
