@@ -1,0 +1,26 @@
+
+next_skills:
+  # todo: start using it
+  examples:
+    - алиса а остальные расскажи
+    - ещё
+    - еще
+    - дальше
+    - еще варианты
+
+run_skill:
+  regexp: '(алиса )?(запусти|открой|включи)( пожалуйста)?( мне| нам)? (навык|игру).+'
+
+exit_skill:
+  examples:
+    - выйти из навыка
+    - выход из навыка
+
+get_skill_details:
+  regexp: ''
+
+repeat:
+  examples:
+    - что
+    - повтори
+    - еще раз

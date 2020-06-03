@@ -5,9 +5,9 @@ from pymongo import MongoClient
 import mongomock
 import sentry_sdk
 
-import scraping
+from skill import scraping
 
-from dialog_manager import SearcherDialogManager
+from skill.dialog_manager import SearcherDialogManager
 from nanosearch.custom_engine import SkillEngine
 
 
