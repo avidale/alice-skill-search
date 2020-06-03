@@ -49,3 +49,39 @@ def get_details_skill(request):
     if match:
         text = text[match.span()[1]:]
     return text
+
+
+RE_EXACT_DETAILS = re.compile(
+    '^'
+    '(алиса )?'
+    '(расскажи )?'
+    '(подробнее )?'
+    '(про )?'
+    '(?P<item>(\d+|первый|второй|третий|четвертый|пятый|шестой|седьмой|восьмой|девятый|десятый))'
+    '( навык)?'
+    '$'
+)
+
+
+def get_exact_details_skill(request):
+    text = tgalice.basic_nlu.fast_normalize(request)
+    match = re.match(RE_EXACT_DETAILS, text)
+    if not match:
+        return None
+    gd = match.groupdict()
+    if 'item' not in gd:
+        return None
+    item = gd['item']
+    norms = {
+        'первый': 1,
+        'второй': 2,
+        'третий': 3,
+        'четвертый': 4,
+        'пятый': 5,
+        'шестой': 6,
+        'седьмой': 7,
+        'восьмой': 8,
+        'девятый': 9,
+        'десятый': 10,
+    }
+    return int(norms.get(item, item))

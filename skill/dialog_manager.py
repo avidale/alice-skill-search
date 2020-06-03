@@ -35,6 +35,8 @@ class SearcherDialogManager(BaseDialogManager):
         intents = self.intent_matcher.aggregate_scores(text)
         faq_response = self.faq_dm.try_to_respond(ctx)
 
+        result_number = nlu.get_exact_details_skill(text)
+
         prev_results = None
         if uo.get('found_skills'):
             prev_results = [
@@ -77,6 +79,19 @@ class SearcherDialogManager(BaseDialogManager):
             resp_text, links, suggests = format_serp(prev_results, page=uo['found_skills_page'])
             response = tgalice.dialog.Response(resp_text, links=links, user_object=uo, suggests=suggests)
             return response
+        elif result_number is not None and prev_results and 'found_skills_page' in uo:
+            if 1 <= result_number <= len(prev_results):
+                doc = prev_results[result_number-1]
+                resp_text = 'Навык "{}".\n{}'.format(
+                    doc['name'], doc['description']
+                )
+            else:
+                resp_text = 'Навыка с таким номером я не нашла.'
+            suggests = ['к списку']
+            return tgalice.dialog.Response(resp_text, user_object=uo, suggests=suggests)
+        elif 'go_to_list' in intents and prev_results and 'found_skills_page' in uo:
+            resp_text, links, suggests = format_serp(prev_results, page=uo['found_skills_page'])
+            return tgalice.dialog.Response(resp_text, links=links, user_object=uo, suggests=suggests)
 
         search_text = nlu.get_search_text(ctx.message_text)
         results = self.engine.find(search_text)
