@@ -18,3 +18,8 @@ def skill_title(doc):
     if jaccard(title, description_short) < 0.5:
         return '{} ({})'.format(title, description_short)
     return title
+
+
+def clip_text(text, max_length):
+    # todo: use sentenizer to clip more gently
+    return text[:max_length]

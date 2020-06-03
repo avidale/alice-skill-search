@@ -83,8 +83,9 @@ class SearcherDialogManager(BaseDialogManager):
             if 1 <= result_number <= len(prev_results):
                 doc = prev_results[result_number-1]
                 resp_text = 'Навык "{}".\n{}'.format(
-                    doc['name'], doc['description']
+                    doc['name'], doc['description'],
                 )
+                resp_text = nlg.clip_text(resp_text, 1000)
             else:
                 resp_text = 'Навыка с таким номером я не нашла.'
             suggests = ['к списку']
