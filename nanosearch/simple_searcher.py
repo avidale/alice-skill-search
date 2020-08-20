@@ -4,6 +4,8 @@ from collections import Counter, defaultdict
 from functools import lru_cache
 from nltk import wordpunct_tokenize, SnowballStemmer
 
+from nanosearch.base_searcher import BaseSearcher
+
 
 class Searcher:
     def __init__(self, k=1.5, b=0.75, stemmer=None):
