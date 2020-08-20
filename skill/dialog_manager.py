@@ -50,6 +50,8 @@ class SearcherDialogManager(BaseDialogManager):
                         'Можете спросить меня, например, "Какой навык рассказывает про костный мозг?" ' \
                         'Чтобы выйти, скажите "Алиса, хватит"'
             return tgalice.dialog.Response(resp_text)
+        elif ctx.message_text == 'ping' and ctx.session_is_new():
+            return tgalice.dialog.Response('pong!')
         elif tgalice.basic_nlu.like_help(ctx.message_text):
             resp_text = 'Вы в навыке "Искатель навыков" для поиска других навыков. ' \
                         'Можете спросить меня, например, "Какой навык рассказывает про костный мозг?" ' \
