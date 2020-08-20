@@ -38,3 +38,10 @@ def test_search(mock_dm: SearcherDialogManager):
     assert 'вести учет выпитой воды' in resp1.text
     assert 'к списку' in resp1.suggests
     assert len(resp1.links) == 1
+
+
+def test_single_pass(mock_dm: SearcherDialogManager):
+    # expect serp
+    resp = mock_dm.respond(make_context('найди навык про воду', new_session=True))
+    assert 'Время выпить воды' in resp.text
+    assert '1' in resp.suggests

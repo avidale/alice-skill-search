@@ -45,7 +45,7 @@ class SearcherDialogManager(BaseDialogManager):
                 if doc_id in self.engine.docs
             ]
 
-        if ctx.session_is_new() or not ctx.message_text or ctx.message_text == '/start':
+        if not ctx.message_text or ctx.message_text == '/start':
             resp_text = 'Привет! Это навык "Искатель навыков" для поиска других навыков. ' \
                         'Можете спросить меня, например, "Какой навык рассказывает про костный мозг?" ' \
                         'Чтобы выйти, скажите "Алиса, хватит"'
