@@ -108,7 +108,9 @@ class SearcherDialogManager(BaseDialogManager):
             resp_text = 'Простите, ничего не нашла по запросу "{}".'.format(search_text)
             return tgalice.dialog.Response(resp_text)
         uo['found_skills'] = [doc['id'] for doc in results]
-        uo['found_skills_page'] = 0
+        print(uo.get('found_skills_page'))
+        if not uo.get('found_skills_page'):
+            uo['found_skills_page'] = 0
         resp_text, links, suggests = format_serp(results)
         response = tgalice.dialog.Response(resp_text, links=links, user_object=uo, suggests=suggests)
         return response
