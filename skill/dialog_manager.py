@@ -1,3 +1,5 @@
+import logging
+
 from skill import nlg, nlu
 import random
 import tgalice
@@ -5,6 +7,9 @@ import yaml
 
 from tgalice.dialog_manager import BaseDialogManager
 from nanosearch.custom_engine import SkillEngine
+
+
+logger = logging.getLogger(__name__)
 
 
 class SearcherDialogManager(BaseDialogManager):
@@ -30,6 +35,9 @@ class SearcherDialogManager(BaseDialogManager):
 
     def respond(self, ctx: tgalice.dialog.Context):
         uo = ctx.user_object or {}
+
+        logger.debug(f'starting user object: {len(uo.get("found_skills") or [])} skills,'
+                     f'page {uo.get("found_skills_page")} ')
 
         text = tgalice.nlu.basic_nlu.fast_normalize(ctx.message_text)
         intents = self.intent_matcher.aggregate_scores(text)
@@ -108,9 +116,7 @@ class SearcherDialogManager(BaseDialogManager):
             resp_text = 'Простите, ничего не нашла по запросу "{}".'.format(search_text)
             return tgalice.dialog.Response(resp_text)
         uo['found_skills'] = [doc['id'] for doc in results]
-        print(uo.get('found_skills_page'))
-        if not uo.get('found_skills_page'):
-            uo['found_skills_page'] = 0
+        uo['found_skills_page'] = 0
         resp_text, links, suggests = format_serp(results)
         response = tgalice.dialog.Response(resp_text, links=links, user_object=uo, suggests=suggests)
         return response
