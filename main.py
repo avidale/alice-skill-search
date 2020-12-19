@@ -1,4 +1,9 @@
+import gc
 import logging
+import random
+import threading
+import time
+
 import tgalice
 import os
 from pymongo import MongoClient
@@ -21,6 +26,9 @@ if os.getenv('SENTRY_DSN', None) is not None:
     sentry_sdk.init(os.environ['SENTRY_DSN'])
 
 
+UPDATE_INTERVAL = 60 * 15  # every 15 minutes
+
+
 if __name__ == '__main__':
     mongo_url = os.environ.get('MONGODB_URI')
     if mongo_url:
@@ -31,10 +39,30 @@ if __name__ == '__main__':
         mongo_db = mongo_client.db
 
     engine = SkillEngine()
-    print('Scraping...')
-    docs = scraping.collect_docs()
-    print('Building search indexes...')
-    engine.add_docs(docs)
+
+    def update():
+        t = time.time()
+        print('Scraping...')
+        docs = scraping.collect_docs()
+        print('Building search indexes...')
+        engine.add_docs(docs)
+        print(f'Docs have been updated in {time.time() - t} seconds!')
+
+    print('Running the initial scraping')
+    update()
+
+    def update_loop():
+        while True:
+            # sleep a random time to unsync workers from each other
+            time.sleep(UPDATE_INTERVAL * (0.75 + 0.5 * random.random()))
+            print('ENTER the update loop')
+            update()
+            gc.collect()
+            print('EXIT the update loop')
+
+    thread = threading.Thread(target=update_loop, args=())
+    thread.daemon = True
+    thread.start()
 
     dm = SearcherDialogManager(engine=engine)
 
