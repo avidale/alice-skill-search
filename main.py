@@ -19,6 +19,9 @@ from nanosearch.custom_engine import SkillEngine
 logging.basicConfig(level=logging.INFO)
 
 
+logger = logging.getLogger(__name__)
+
+
 BASE_URL = 'https://alice-skill-search.herokuapp.com/'
 
 
@@ -43,10 +46,13 @@ if __name__ == '__main__':
     def update():
         t = time.time()
         print('Scraping...')
+        logger.info('Scraping...')
         docs = scraping.collect_docs()
         print('Building search indexes...')
+        logger.info('Building search indexes...')
         engine.add_docs(docs)
         print(f'Docs have been updated in {time.time() - t} seconds!')
+        logger.info(f'Docs have been updated in {time.time() - t} seconds!')
 
     print('Running the initial scraping')
     update()
@@ -56,9 +62,11 @@ if __name__ == '__main__':
             # sleep a random time to unsync workers from each other
             time.sleep(UPDATE_INTERVAL * (0.75 + 0.5 * random.random()))
             print('ENTER the update loop')
+            logger.info('ENTER the update loop')
             update()
             gc.collect()
             print('EXIT the update loop')
+            logger.info('EXIT the update loop')
 
     thread = threading.Thread(target=update_loop, args=())
     thread.daemon = True
