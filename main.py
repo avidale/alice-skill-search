@@ -58,12 +58,17 @@ if __name__ == '__main__':
     update()
 
     def update_loop():
+        print('START waiting for the update loop')
+        logger.info('START waiting for the update loop')
         while True:
             # sleep a random time to unsync workers from each other
             time.sleep(UPDATE_INTERVAL * (0.75 + 0.5 * random.random()))
             print('ENTER the update loop')
             logger.info('ENTER the update loop')
-            update()
+            try:
+                update()
+            except Exception as e:
+                sentry_sdk.capture_exception(e)
             gc.collect()
             print('EXIT the update loop')
             logger.info('EXIT the update loop')
