@@ -1,6 +1,6 @@
 # STEP 1: Install base image. Optimized for Python.
 FROM python:3.7-slim-buster
-RUN pip install flask mongomock nltk pymongo pyyaml dialogic requests sentry-sdk razdel dnspython
+RUN pip install flask mongomock nltk pymongo pyyaml dialogic>=0.3.20 requests sentry-sdk razdel dnspython
 
 # STEP 2: Copy the source code in the current directory to the container.  Store it in a folder named /app.
 ADD . /app
