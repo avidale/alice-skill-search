@@ -1,5 +1,5 @@
 import re
-import tgalice
+import dialogic
 
 
 RE_PREFIX = re.compile(
@@ -25,7 +25,7 @@ RE_PREFIX = re.compile(
 
 
 def get_search_text(request):
-    text = tgalice.basic_nlu.fast_normalize(request)
+    text = dialogic.basic_nlu.fast_normalize(request)
     match = re.match(RE_PREFIX, text)
     if match:
         text = text[match.span()[1]:]
@@ -44,7 +44,7 @@ RE_PREFIX_DETAULS = re.compile(
 
 def get_details_skill(request):
     # todo: use this function for item selector
-    text = tgalice.basic_nlu.fast_normalize(request)
+    text = dialogic.basic_nlu.fast_normalize(request)
     match = re.match(RE_PREFIX_DETAULS, text)
     if match:
         text = text[match.span()[1]:]
@@ -67,7 +67,7 @@ RE_EXACT_DETAILS = re.compile(
 
 
 def get_exact_details_skill(request):
-    text = tgalice.basic_nlu.fast_normalize(request)
+    text = dialogic.basic_nlu.fast_normalize(request)
     match = re.match(RE_EXACT_DETAILS, text)
     if not match:
         return None

@@ -1,7 +1,7 @@
 import pytest
 from tests.test_data import mock_docs  # noqa
 
-from tgalice.testing.testing_utils import make_context
+from dialogic.testing.testing_utils import make_context
 
 from skill.dialog_manager import SearcherDialogManager
 from nanosearch.custom_engine import SkillEngine
